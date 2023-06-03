@@ -1,6 +1,13 @@
-use crate::traits::{clone_as::CloneAs, cast::Cast, get_two_points_mut::Point};
+use std::fmt::{Display, Write};
 
-use self::{create_board::{create_board, BoardArray}, move_board::{MoveError, mov_board}};
+use crate::traits::{cast::Cast, clone_as::CloneAs, get_two_points_mut::Point};
+
+use self::{
+    create_board::{create_board, BoardArray},
+    move_board::{mov_board, MoveError},
+};
+
+use super::cell::Cell;
 
 mod create_board;
 mod move_board;
@@ -17,7 +24,7 @@ impl Default for Board {
 }
 
 impl Board {
-    pub fn mov(&mut self, from: Point, to: Point) -> Result<(), MoveError>  {
+    pub fn mov(&mut self, from: Point, to: Point) -> Result<(), MoveError> {
         mov_board(self, from, to)
     }
 }
@@ -27,12 +34,12 @@ const BOARD_LEN: usize = 154;
 impl CloneAs<String> for Board {
     fn clone_as(&self) -> String {
         let mut s = String::with_capacity(BOARD_LEN);
-		
-		s.push(' ');
-		for i in 0..8 {
-			s.push((65usize + i).cast());
-		}
-		s.push('\n');
+
+        s.push(' ');
+        for i in 0..8 {
+            s.push((65usize + i).cast());
+        }
+        s.push('\n');
 
         self.board.iter().enumerate().for_each(|(i, row)| {
             s.push((49usize + i).cast());
@@ -45,10 +52,43 @@ impl CloneAs<String> for Board {
     }
 }
 
-impl ToString for Board {
-    fn to_string(&self) -> String {
-        self.clone_as()
+impl Display for Board {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "   ")?;
+        for i in 0..8 {
+            let letter: char = (65usize + i).cast();
+            write!(f, " {letter} ")?;
+        }
+        write!(f, "\n")?;
+
+		for (i, row) in self.board.iter().enumerate() {
+			write_row_delimiter(f)?;
+			write_row_cell(f, row, i + 1)?;
+		}
+
+        write_row_delimiter(f)?;
+
+        Ok(())
     }
+}
+
+fn write_row_delimiter(f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    write!(f, "   +--+--+--+--+--+--+--+--+\n")
+}
+
+fn write_row_cell(f: &mut std::fmt::Formatter<'_>, cells: &[Cell], row: usize) -> std::fmt::Result {
+    write!(f, " {row} |")?;
+    for cell in cells {
+        write!(
+            f,
+            "{} |",
+            cell.piece
+                .as_ref()
+                .map(|piece| -> char { piece.clone_as() })
+                .unwrap_or(' ')
+        )?;
+    }
+    write!(f, "\n")
 }
 
 mod tests {

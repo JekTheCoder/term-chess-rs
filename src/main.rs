@@ -8,7 +8,7 @@
     clippy::perf
 )]
 
-use crate::{game::board::Board, traits::clone_as::CloneAs};
+use crate::game::board::Board;
 
 mod game;
 mod traits;
@@ -16,5 +16,5 @@ mod utils;
 
 fn main() {
     let board = Board::default();
-    println!("{}", board.clone_as());
+    println!("{}", board);
 }
