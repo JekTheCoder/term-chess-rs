@@ -52,6 +52,7 @@ impl ToString for Board {
 }
 
 mod tests {
+    #[allow(unused_imports)]
     use super::*;
 
     #[test]

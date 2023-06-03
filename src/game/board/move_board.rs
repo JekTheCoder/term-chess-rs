@@ -14,10 +14,10 @@ pub fn mov_board(board: &mut Board, from: Point, to: Point) -> Result<(), MoveEr
     let (from, to) = board
         .board
         .get_two_points_mut(from, to)
-        .ok_or_else(|| MoveError::SamePoint)?;
+        .ok_or(MoveError::SamePoint)?;
 
-	let to = to.ok_or_else(|| MoveError::StartOutOfBounds)?;
-	let from = from.ok_or_else(|| MoveError::EndOutOfBounds)?;
+	let to = to.ok_or(MoveError::StartOutOfBounds)?;
+	let from = from.ok_or(MoveError::EndOutOfBounds)?;
 
     if from.piece.is_none() {
         return Err(MoveError::FromStartEmpty);

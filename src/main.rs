@@ -8,20 +8,13 @@
     clippy::perf
 )]
 
-use crate::{
-    game::board::Board,
-    traits::{clone_as::CloneAs, get_two_points_mut::Point},
-};
+use crate::{game::board::Board, traits::clone_as::CloneAs};
 
 mod game;
 mod traits;
 mod utils;
 
 fn main() {
-    let mut board = Board::default();
-    println!("{}", board.clone_as());
-
-    board.mov(Point { x: 0, y: 0 }, Point { x: 2, y: 2 });
-
+    let board = Board::default();
     println!("{}", board.clone_as());
 }

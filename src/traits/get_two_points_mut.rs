@@ -7,12 +7,6 @@ pub struct Point {
     pub y: usize,
 }
 
-impl Point {
-	pub fn new(x: usize, y: usize) -> Self {
-		Self { x, y }
-	}
-}
-
 pub trait GetTwoPointsMut<T> {
     fn get_two_points_mut(
         &mut self,
