@@ -19,19 +19,19 @@ pub enum Piece {
 impl CloneAs<char> for Piece {
     fn clone_as(&self) -> char {
         match self {
-            Piece::King(Color::White) => '♔',
-            Piece::Queen(Color::White) => '♕',
-            Piece::Rook(Color::White) => '♖',
-            Piece::Bishop(Color::White) => '♗',
-            Piece::Knight(Color::White) => '♘',
-            Piece::Pawn(Color::White) => '♙',
+            Self::King(Color::White) => '♔',
+            Self::Queen(Color::White) => '♕',
+            Self::Rook(Color::White) => '♖',
+            Self::Bishop(Color::White) => '♗',
+            Self::Knight(Color::White) => '♘',
+            Self::Pawn(Color::White) => '♙',
 
-            Piece::King(Color::Black) => '♚',
-            Piece::Queen(Color::Black) => '♛',
-            Piece::Rook(Color::Black) => '♜',
-            Piece::Bishop(Color::Black) => '♝',
-            Piece::Knight(Color::Black) => '♞',
-            Piece::Pawn(Color::Black) => '♟',
+            Self::King(Color::Black) => '♚',
+            Self::Queen(Color::Black) => '♛',
+            Self::Rook(Color::Black) => '♜',
+            Self::Bishop(Color::Black) => '♝',
+            Self::Knight(Color::Black) => '♞',
+            Self::Pawn(Color::Black) => '♟',
         }
     }
 }

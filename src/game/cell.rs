@@ -7,11 +7,8 @@ pub struct Cell {
     pub piece: Option<Piece>,
 }
 
-impl CloneAs<char> for &Cell {
+impl CloneAs<char> for Cell {
     fn clone_as(&self) -> char {
-        match &self.piece {
-            Some(piece) => piece.clone_as(),
-            None => ' ',
-        }
+        self.piece.as_ref().map_or_else(|| ' ', CloneAs::clone_as)
     }
 }
