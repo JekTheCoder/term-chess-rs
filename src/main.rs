@@ -19,19 +19,21 @@ mod utils;
 
 fn main() {
     let mut board = Board::default();
-    println!("{}", board);
+    println!("{board}");
 
-    for mov in stdin().lines().flatten().flat_map(|line| {
+    let moves = stdin().lines().flatten().flat_map(|line| {
         let mov = line.parse::<Mov>();
-        if let Err(_) = &mov {
+        if mov.is_err() {
             println!("What?");
         }
 
         mov
-    }) {
-		let Mov { from, to } = mov;
-		if let Ok(_) = board.mov(from, to) {
-			println!("{}", board);
-		}
+    });
+
+    for mov in moves {
+        let Mov { from, to } = mov;
+        if board.mov(from, to).is_ok() {
+            println!("{board}");
+        }
     }
 }

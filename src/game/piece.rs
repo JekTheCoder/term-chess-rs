@@ -1,6 +1,6 @@
 use crate::traits::clone_as::CloneAs;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Color {
     White,
     Black,
@@ -36,3 +36,20 @@ impl CloneAs<char> for Piece {
     }
 }
 
+
+impl Piece {
+    pub fn color(&self) -> &Color {
+        match self {
+            Self::King(c) => c,
+            Self::Queen(c) => c,
+            Self::Rook(c) => c,
+            Self::Bishop(c) => c,
+            Self::Knight(c) => c,
+            Self::Pawn(c) => c,
+        }
+    }
+
+    pub fn can_eat(&self, other: &Piece) -> bool {
+        self.color() != other.color()
+    }
+}

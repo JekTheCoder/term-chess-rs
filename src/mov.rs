@@ -27,7 +27,7 @@ impl FromStr for Mov {
     }
 }
 
-fn expect(char: Option<char>, to_be: char) -> Result<(), MovParseError> {
+const fn expect(char: Option<char>, to_be: char) -> Result<(), MovParseError> {
     match char {
         Some(c) if c == to_be => Ok(()),
         _ => Err(MovParseError),
