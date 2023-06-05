@@ -20,7 +20,7 @@ impl Default for Board {
     fn default() -> Self {
         Self {
             board: create_board(),
-			local: Color::White,
+            local: Color::White,
         }
     }
 }
@@ -61,7 +61,7 @@ impl Display for Board {
             let letter: char = (65usize + i).cast();
             write!(f, " {letter} ")?;
         }
-        write!(f, "\n")?;
+        writeln!(f)?;
 
         for (i, row) in self.board.iter().enumerate() {
             write_row_delimiter(f)?;
@@ -75,7 +75,7 @@ impl Display for Board {
 }
 
 fn write_row_delimiter(f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    write!(f, "   +--+--+--+--+--+--+--+--+\n")
+    writeln!(f, "   +--+--+--+--+--+--+--+--+")
 }
 
 fn write_row_cell(f: &mut std::fmt::Formatter<'_>, cells: &[Cell], row: usize) -> std::fmt::Result {
@@ -86,11 +86,10 @@ fn write_row_cell(f: &mut std::fmt::Formatter<'_>, cells: &[Cell], row: usize) -
             "{} |",
             cell.piece
                 .as_ref()
-                .map(|piece| -> char { piece.clone_as() })
-                .unwrap_or(' ')
+                .map_or(' ', |piece| -> char { piece.clone_as() })
         )?;
     }
-    write!(f, "\n")
+    writeln!(f)
 }
 
 mod tests {

@@ -8,10 +8,10 @@ pub struct Mov {
 }
 
 #[derive(Debug)]
-pub struct MovParseError;
+pub struct ParseError;
 
 impl FromStr for Mov {
-    type Err = MovParseError;
+    type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
 		let mut chars = s.chars();
@@ -23,25 +23,25 @@ impl FromStr for Mov {
 
 		let to = parse_point(&mut chars)?;
 
-		Ok(Mov { from, to })
+		Ok(Self { from, to })
     }
 }
 
-const fn expect(char: Option<char>, to_be: char) -> Result<(), MovParseError> {
+const fn expect(char: Option<char>, to_be: char) -> Result<(), ParseError> {
     match char {
         Some(c) if c == to_be => Ok(()),
-        _ => Err(MovParseError),
+        _ => Err(ParseError),
     }
 }
 
-fn char_to_usize(c: Option<char>) -> Result<usize, MovParseError> {
-    c.ok_or(MovParseError)?
+fn char_to_usize(c: Option<char>) -> Result<usize, ParseError> {
+    c.ok_or(ParseError)?
         .to_digit(10)
         .map(|n| n.try_into().unwrap())
-        .ok_or(MovParseError)
+        .ok_or(ParseError)
 }
 
-fn parse_point(chars: &mut Chars<'_>) -> Result<Point, MovParseError> {
+fn parse_point(chars: &mut Chars<'_>) -> Result<Point, ParseError> {
     let x = char_to_usize(chars.next())?;
     expect(chars.next(), ' ')?;
     let y = char_to_usize(chars.next())?;

@@ -31,19 +31,16 @@ pub fn mov_board(board: &mut Board, from: Point, to: Point) -> Result<MoveRes, M
 }
 
 pub fn mov_cells(from: &mut Cell, to: &mut Cell) -> Result<MoveRes, MoveError> {
-    match to.piece.as_mut() {
-        Some(to_piece) => {
-            let from_piece = from.piece.take().ok_or(MoveError::FromStartEmpty)?;
-            if from_piece.can_eat(to_piece) {
-                Ok(MoveRes::Eaten(std::mem::replace(to_piece, from_piece)))
-            } else {
-				from.piece = Some(from_piece);
-                Err(MoveError::CantEat)
-            }
+    if let Some(to_piece) = to.piece.as_mut() {
+        let from_piece = from.piece.take().ok_or(MoveError::FromStartEmpty)?;
+        if from_piece.can_eat(to_piece) {
+            Ok(MoveRes::Eaten(std::mem::replace(to_piece, from_piece)))
+        } else {
+            from.piece = Some(from_piece);
+            Err(MoveError::CantEat)
         }
-        None => {
-            std::mem::swap(from, to);
-            Ok(MoveRes::Moved)
-        }
+    } else {
+        std::mem::swap(from, to);
+        Ok(MoveRes::Moved)
     }
 }
