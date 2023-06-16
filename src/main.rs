@@ -10,8 +10,12 @@
 
 use std::io::stdin;
 
-use crate::{game::board::Board, mov::Mov};
+use crate::{
+    game::{board::move_board, board::Board},
+    mov::Mov,
+};
 
+mod arrays;
 mod game;
 mod mov;
 mod traits;
@@ -32,7 +36,12 @@ fn main() {
 
     for mov in moves {
         let Mov { from, to } = mov;
-        if board.mov(from, to).is_ok() {
+        if let Err(err) = board.mov(from, to) {
+            match err {
+                move_board::Error::InvalidMove => println!("Invalid move"),
+				_ => {}
+            }
+        } else {
             println!("{board}");
         }
     }

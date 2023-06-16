@@ -1,13 +1,9 @@
-use crate::mov::Mov;
+use crate::traits::get_two_points_mut::Point;
 
-pub trait Valid {
-    fn mov_valid(mov: Mov) -> bool;
-}
+use super::board::Board;
 
-struct Rook;
-impl Valid for Rook {
-    fn mov_valid(mov: Mov) -> bool {
-		let Mov { from, to } = mov;
-		from.x == to.x || from.y == to.y
-	}
+pub struct MoveContext<'a> {
+    pub board: &'a Board,
+    pub from: Point,
+    pub to: Point,
 }

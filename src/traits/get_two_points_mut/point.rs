@@ -1,4 +1,4 @@
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq)]
 pub struct Point {
     pub x: usize,
     pub y: usize,
