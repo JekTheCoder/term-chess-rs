@@ -2,7 +2,7 @@ use crate::traits::get_two_points_mut::Point;
 
 use super::sign::Sign;
 
-#[derive(Clone)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Ray2D {
     pub horizontal: Sign,
     pub vertical: Sign,
