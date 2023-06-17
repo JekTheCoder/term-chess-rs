@@ -1,9 +1,11 @@
 mod diagonal_ray;
+mod pawn_valid_mov;
+
 use std::cmp::Ordering;
 
 use crate::traits::{clone_as::CloneAs, get_two_points_mut::Point, is_some_and::IsSomeAnd};
 
-use self::diagonal_ray::diagonal_ray;
+use self::{diagonal_ray::diagonal_ray, pawn_valid_mov::pawn_is_valid_move};
 
 use super::{
     board::Board,
@@ -87,14 +89,6 @@ macro_rules! or_return {
     }};
 }
 
-macro_rules! has_to {
-    ($x:expr) => {
-        if (!$x) {
-            return false;
-        }
-    };
-}
-
 fn king_is_valid_move(from: Point, to: Point) -> bool {
     from.x.abs_diff(to.x) == 1 && from.y.abs_diff(to.y) == 1
 }
@@ -112,40 +106,6 @@ fn knight_is_valid_move(from: Point, to: Point) -> bool {
     from.x.abs_diff(to.x) == 2 && from.y.abs_diff(to.y) == 1
 }
 
-fn pawn_is_valid_move(context: MoveContext<'_>, color: &Color) -> bool {
-    let MoveContext { board, from, to } = context;
-
-    let vertical = board.direction_of(color);
-
-    has_to!(from.x == to.x || from.x + 1 == to.x || to.x + 1 == from.x);
-
-    match to.x.cmp(&from.x) {
-        Ordering::Greater => board
-            .ray2d_limit(from, Ray2D::new(Sign::Positive, vertical), 1)
-            .is_some(),
-        Ordering::Less => board
-            .ray2d_limit(from, Ray2D::new(Sign::Negative, vertical), 1)
-            .is_some(),
-        Ordering::Equal => {
-            let mov_limit = (board.pawn_first_mov(from.y, color) as usize) + 1;
-
-            let from_y = from.y as usize;
-
-            board
-                .ray2d_limit(from, Ray2D::new(Sign::Zero, vertical.clone()), mov_limit)
-                .is_none()
-                && {
-                    let range = if vertical == Sign::Positive {
-                        from_y + 1..=from_y + mov_limit
-                    } else {
-                        from_y + mov_limit - 1..=from_y
-                    };
-
-                    range.contains(&to.y)
-                }
-        }
-    }
-}
 
 fn queen_is_valid_move(board: &Board, from: Point, to: Point) -> bool {
     rook_is_valid_move(board, from.clone(), to.clone()) || bishop_is_valid_move(board, from, to)
@@ -178,26 +138,3 @@ fn rook_is_valid_move(board: &Board, from: Point, to: Point) -> bool {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn pawn_validates_direction() {
-        let board = Board::default();
-        let piece = Piece::new(Color::White, Kind::Pawn);
-        let valid_mov = piece.is_valid_move(MoveContext {
-            board: &board,
-            to: Point { x: 0, y: 2 },
-            from: Point { x: 0, y: 1 },
-        });
-        let invalid_mov = piece.is_valid_move(MoveContext {
-            board: &board,
-            to: Point { x: 4, y: 3 },
-            from: Point { x: 0, y: 1 },
-        });
-
-        assert!(valid_mov);
-        assert!(!invalid_mov);
-    }
-}
