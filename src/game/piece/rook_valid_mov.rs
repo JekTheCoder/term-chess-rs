@@ -13,7 +13,7 @@ use crate::{
 
 pub fn rook_is_valid_move(board: &Board, from: Point, to: &Point) -> bool {
     let (ray, get_axis, coord) = if from.x == to.x {
-        let dir = match from.y.cmp(&to.y) {
+        let dir = match to.y.cmp(&from.y) {
             Ordering::Greater => Sign::Positive,
             _ => Sign::Negative,
         };
@@ -23,7 +23,7 @@ pub fn rook_is_valid_move(board: &Board, from: Point, to: &Point) -> bool {
 
         (ray, f, to.y)
     } else if from.y == to.y {
-        let dir = match from.x.cmp(&to.x) {
+        let dir = match to.x.cmp(&from.x) {
             Ordering::Greater => Sign::Positive,
             _ => Sign::Negative,
         };
@@ -44,22 +44,54 @@ pub fn rook_is_valid_move(board: &Board, from: Point, to: &Point) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::macros::board;
+    use crate::{
+        game::{
+            board::mov,
+            color::Color,
+            piece::{Kind, Piece},
+        },
+        macros::board,
+    };
 
     #[test]
-    fn rook_is_valid_move() {
+    fn rook_can_eat() {
         let board = board!(
-			['R', ..];
-			empty;
-			empty;
-			empty;
-			empty;
-			empty;
-			empty;
-			['r', ..];
+            ['R', ..];
+            empty;
+            empty;
+            empty;
+            empty;
+            empty;
+            empty;
+            ['r', ..];
         );
-		let mut board = Board::with_array(board);
-		println!("{}", board);
-		assert!(false);
+        let mut board = Board::with_array(board);
+        let res = board.mov(&Point { x: 0, y: 0 }, &Point { x: 0, y: 7 }, Color::White);
+
+        assert_eq!(
+            res,
+            Ok(mov::Info::Eaten(Piece {
+                kind: Kind::Rook,
+                color: Color::Black
+            }))
+        );
+    }
+
+    #[test]
+    fn do_not_surpass() {
+        let board = board!(
+            ['R', ..];
+            empty;
+            empty;
+            ['P', ..];
+            empty;
+            empty;
+            empty;
+            ['r', ..];
+        );
+        let mut board = Board::with_array(board);
+        let res = board.mov(&Point { x: 0, y: 0 }, &Point { x: 0, y: 7 }, Color::White);
+
+        assert!(res.is_err());
     }
 }

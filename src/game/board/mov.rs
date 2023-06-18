@@ -5,7 +5,7 @@ use crate::{
 
 use super::Board;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Error {
     StartOutOfBounds,
     FromStartEmpty,
@@ -16,6 +16,7 @@ pub enum Error {
     PieceNotOfTeam,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Info {
     Eaten(Piece),
     Moved,
