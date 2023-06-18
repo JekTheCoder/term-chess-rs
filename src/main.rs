@@ -10,13 +10,14 @@
 
 use std::io::stdin;
 
-use crate::{game::{board::{Board, self}, Game}, mov::Mov};
+use crate::{game::{board::{Board, self}, Game}, input::mov::Mov};
 
 mod macros;
 mod game;
 mod mov;
 mod traits;
 mod utils;
+mod input;
 
 fn main() {
     let mut game = Game::with_board(Board::default());
@@ -32,7 +33,7 @@ fn main() {
     });
 
     for mov in moves {
-        let Mov { from, to } = mov;
+        let crate::mov::Mov { from, to } = mov.into_points();
         if let Err(err) = game.mov(&from, &to) {
             match err {
                 board::mov::Error::InvalidMove => println!("Invalid move"),
