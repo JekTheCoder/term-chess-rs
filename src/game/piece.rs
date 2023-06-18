@@ -13,14 +13,8 @@ use super::{
     query::{
         ray2d::{Ray2D, RayQuery},
         sign::Sign,
-    },
+    }, color::Color,
 };
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Color {
-    White,
-    Black,
-}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Piece {
@@ -54,7 +48,7 @@ impl Piece {
             Kind::Rook => rook_is_valid_move(mov.board, mov.from, &mov.to),
             Kind::Bishop => bishop_is_valid_move(mov.board, &mov.from, &mov.to),
             Kind::Knight => knight_is_valid_move(&mov.from, &mov.to),
-            Kind::Pawn => pawn_is_valid_move(mov, &self.color),
+            Kind::Pawn => pawn_is_valid_move(mov, self.color),
         }
     }
 }

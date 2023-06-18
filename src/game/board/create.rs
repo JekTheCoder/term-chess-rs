@@ -1,6 +1,7 @@
 use crate::game::{
     cell::Cell,
-    piece::{Color, Kind, Piece},
+    piece::{Kind, Piece},
+    color::Color,
 };
 
 pub type BoardArray = [[Cell; 8]; 8];

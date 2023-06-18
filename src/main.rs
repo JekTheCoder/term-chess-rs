@@ -10,7 +10,7 @@
 
 use std::io::stdin;
 
-use crate::{game::board::{Board, self}, mov::Mov};
+use crate::{game::{board::{Board, self}, Game}, mov::Mov};
 
 mod game;
 mod mov;
@@ -18,8 +18,8 @@ mod traits;
 mod utils;
 
 fn main() {
-    let mut board = Board::default();
-    println!("{board}");
+    let mut game = Game::with_board(Board::default());
+    println!("{game}");
 
     let moves = stdin().lines().flatten().flat_map(|line| {
         let mov = line.parse::<Mov>();
@@ -32,7 +32,7 @@ fn main() {
 
     for mov in moves {
         let Mov { from, to } = mov;
-        if let Err(err) = board.mov(&from, &to) {
+        if let Err(err) = game.mov(&from, &to) {
             match err {
                 board::mov::Error::InvalidMove => println!("Invalid move"),
                 board::mov::Error::SamePoint => println!("Same point"),
@@ -40,9 +40,10 @@ fn main() {
                 board::mov::Error::EndOutOfBounds => println!("End out of bounds"),
                 board::mov::Error::CantEat => println!("Cant eat"),
                 board::mov::Error::FromStartEmpty => println!("From start empty"),
+                board::mov::Error::PieceNotOfTeam => println!("Piece not of team"),
             }
         } else {
-            println!("{board}");
+            println!("{game}");
         }
     }
 }

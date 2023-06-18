@@ -1,5 +1,5 @@
 use crate::{
-    game::{cell::Cell, mov::MoveContext, piece::Piece},
+    game::{cell::Cell, mov::MoveContext, piece::Piece, color::Color},
     traits::get_two_points_mut::{GetTwoPointsMut, Point},
 };
 
@@ -13,6 +13,7 @@ pub enum Error {
     CantEat,
     SamePoint,
     InvalidMove,
+    PieceNotOfTeam,
 }
 
 pub enum Info {
@@ -20,19 +21,28 @@ pub enum Info {
     Moved,
 }
 
-pub fn board(board: &mut Board, from_point: &Point, to_point: &Point) -> Result<Info, Error> {
-    let mov_context = MoveContext {
-        to: to_point.clone(),
-        from: from_point.clone(),
-        board,
-    };
-
+pub fn board(
+    board: &mut Board,
+    from_point: &Point,
+    to_point: &Point,
+    turn: Color,
+) -> Result<Info, Error> {
     if let Some(piece) = board
         .board
         .get(from_point.y)
         .and_then(|arr| arr.get(from_point.x))
         .and_then(|cell| cell.piece.as_ref())
     {
+        if piece.color != turn {
+            return Err(Error::PieceNotOfTeam);
+        }
+
+        let mov_context = MoveContext {
+            to: to_point.clone(),
+            from: from_point.clone(),
+            board,
+        };
+
         if !piece.is_valid_move(mov_context) {
             return Err(Error::InvalidMove);
         }

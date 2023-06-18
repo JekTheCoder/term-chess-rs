@@ -51,10 +51,7 @@ fn find_piece<'a>(mut cells: impl Iterator<Item = Info<&'a Cell>>) -> Option<Col
 
 #[cfg(test)]
 mod tests {
-    use crate::game::{
-        piece::{Color, Kind},
-        query::sign::Sign,
-    };
+    use crate::game::{piece::Kind, query::sign::Sign, color::Color};
 
     use super::*;
 

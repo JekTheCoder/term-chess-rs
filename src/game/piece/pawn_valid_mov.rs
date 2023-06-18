@@ -18,7 +18,7 @@ macro_rules! has_to {
     };
 }
 
-pub fn pawn_is_valid_move(context: MoveContext<'_>, color: &Color) -> bool {
+pub fn pawn_is_valid_move(context: MoveContext<'_>, color: Color) -> bool {
     let MoveContext { board, from, to } = context;
 
     let vertical = board.direction_of(color);
