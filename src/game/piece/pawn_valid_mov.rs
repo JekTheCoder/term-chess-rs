@@ -33,11 +33,11 @@ pub fn pawn_is_valid_move(context: MoveContext<'_>, color: &Color) -> bool {
             .ray2d_limit(from, Ray2D::new(Sign::Negative, vertical), 1)
             .is_some(),
         Ordering::Equal => {
-            let mov_limit = (board.pawn_first_mov(from.y, color) as usize) + 1;
+            let mov_limit = usize::from(board.pawn_first_mov(from.y, color)) + 1;
             let from_y = from.y;
 
             board
-                .ray2d_limit(from, Ray2D::new(Sign::Zero, vertical.clone()), mov_limit)
+                .ray2d_limit(from, Ray2D::new(Sign::Zero, vertical), mov_limit)
                 .is_none()
                 && vertical_range(vertical, from_y, mov_limit).contains(&to.y)
         }
@@ -54,7 +54,9 @@ fn vertical_range(sign: Sign, from_y: usize, mov_limit: usize) -> RangeInclusive
         if let Some((start, end)) = start.zip(end) {
             start..=end
         } else {
-            1..=0
+            #[allow(clippy::reversed_empty_ranges)]
+            let range = 1..=0;
+            range
         }
     }
 }

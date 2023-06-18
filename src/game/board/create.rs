@@ -5,6 +5,7 @@ use crate::game::{
 
 pub type BoardArray = [[Cell; 8]; 8];
 
+#[allow(clippy::module_name_repetitions)]
 pub fn create_board() -> BoardArray {
     let white_back_row: [Cell; 8] = [
         Cell {

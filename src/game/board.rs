@@ -1,17 +1,13 @@
+mod create;
 mod display;
+pub mod mov;
 mod piece_ray;
 
 use crate::traits::get_two_points_mut::Point;
 
-use self::{
-    create_board::{create_board, BoardArray},
-    move_board::{mov_board, Error, Info},
-};
+use self::create::{create_board, BoardArray};
 
 use super::{piece::Color, query::sign::Sign};
-
-mod create_board;
-pub mod move_board;
 
 pub struct Board {
     board: BoardArray,
@@ -27,8 +23,8 @@ impl Default for Board {
 }
 
 impl Board {
-    pub fn mov(&mut self, from: Point, to: Point) -> Result<Info, Error> {
-        mov_board(self, from, to)
+    pub fn mov(&mut self, from: &Point, to: &Point) -> Result<mov::Info, mov::Error> {
+        mov::board(self, from, to)
     }
 
     pub fn pawn_first_mov(&self, row: usize, color: &Color) -> bool {
@@ -39,12 +35,11 @@ impl Board {
         }
     }
 
-	pub fn direction_of(&self, color: &Color) -> Sign {
-		if self.local == *color {
-			Sign::Positive
-		}
-		else {
-			Sign::Negative
-		}
-	}
+    pub fn direction_of(&self, color: &Color) -> Sign {
+        if self.local == *color {
+            Sign::Positive
+        } else {
+            Sign::Negative
+        }
+    }
 }

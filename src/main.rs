@@ -10,12 +10,8 @@
 
 use std::io::stdin;
 
-use crate::{
-    game::{board::move_board, board::Board},
-    mov::Mov,
-};
+use crate::{game::board::{Board, self}, mov::Mov};
 
-mod arrays;
 mod game;
 mod mov;
 mod traits;
@@ -36,10 +32,14 @@ fn main() {
 
     for mov in moves {
         let Mov { from, to } = mov;
-        if let Err(err) = board.mov(from, to) {
+        if let Err(err) = board.mov(&from, &to) {
             match err {
-                move_board::Error::InvalidMove => println!("Invalid move"),
-				_ => {}
+                board::mov::Error::InvalidMove => println!("Invalid move"),
+                board::mov::Error::SamePoint => println!("Same point"),
+                board::mov::Error::StartOutOfBounds => println!("Start out of bounds"),
+                board::mov::Error::EndOutOfBounds => println!("End out of bounds"),
+                board::mov::Error::CantEat => println!("Cant eat"),
+                board::mov::Error::FromStartEmpty => println!("From start empty"),
             }
         } else {
             println!("{board}");

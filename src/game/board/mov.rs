@@ -1,5 +1,4 @@
 use crate::{
-    arrays::MatrixQuadSlice,
     game::{cell::Cell, mov::MoveContext, piece::Piece},
     traits::get_two_points_mut::{GetTwoPointsMut, Point},
 };
@@ -21,11 +20,11 @@ pub enum Info {
     Moved,
 }
 
-pub fn mov_board(board: &mut Board, from_point: Point, to_point: Point) -> Result<Info, Error> {
+pub fn board(board: &mut Board, from_point: &Point, to_point: &Point) -> Result<Info, Error> {
     let mov_context = MoveContext {
         to: to_point.clone(),
         from: from_point.clone(),
-        board: &board,
+        board,
     };
 
     if let Some(piece) = board
@@ -41,16 +40,16 @@ pub fn mov_board(board: &mut Board, from_point: Point, to_point: Point) -> Resul
 
     let (from, to) = board
         .board
-        .get_two_points_mut(from_point.clone(), to_point.clone())
+        .get_two_points_mut(from_point, to_point)
         .ok_or(Error::SamePoint)?;
 
     let to = to.ok_or(Error::StartOutOfBounds)?;
     let from = from.ok_or(Error::EndOutOfBounds)?;
 
-    mov_cells(from, to)
+    cells(from, to)
 }
 
-pub fn mov_cells(from: &mut Cell, to: &mut Cell) -> Result<Info, Error> {
+pub fn cells(from: &mut Cell, to: &mut Cell) -> Result<Info, Error> {
     if let Some(to_piece) = to.piece.as_mut() {
         let from_piece = from.piece.as_ref().ok_or(Error::FromStartEmpty)?;
         if from_piece.can_eat(to_piece) {

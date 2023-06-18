@@ -1,4 +1,4 @@
-#[derive(Clone, PartialEq, Eq, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Sign {
     Positive,
     Negative,
@@ -18,9 +18,9 @@ impl From<Sign> for isize {
 impl Sign {
     pub const fn into_isize(self) -> isize {
         match self {
-            Sign::Positive => 1,
-            Sign::Negative => -1,
-            Sign::Zero => 0,
+            Self::Positive => 1,
+            Self::Negative => -1,
+            Self::Zero => 0,
         }
     }
 }

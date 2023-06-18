@@ -49,11 +49,11 @@ impl Piece {
 
     pub fn is_valid_move(&self, mov: MoveContext<'_>) -> bool {
         match self.kind {
-            Kind::King => king_is_valid_move(mov.from, mov.to),
-            Kind::Queen => queen_is_valid_move(mov.board, mov.from, mov.to),
-            Kind::Rook => rook_is_valid_move(mov.board, mov.from, mov.to),
-            Kind::Bishop => bishop_is_valid_move(mov.board, mov.from, mov.to),
-            Kind::Knight => knight_is_valid_move(mov.from, mov.to),
+            Kind::King => king_is_valid_move(&mov.from, &mov.to),
+            Kind::Queen => queen_is_valid_move(mov.board, mov.from, &mov.to),
+            Kind::Rook => rook_is_valid_move(mov.board, mov.from, &mov.to),
+            Kind::Bishop => bishop_is_valid_move(mov.board, &mov.from, &mov.to),
+            Kind::Knight => knight_is_valid_move(&mov.from, &mov.to),
             Kind::Pawn => pawn_is_valid_move(mov, &self.color),
         }
     }
@@ -89,29 +89,27 @@ macro_rules! or_return {
     }};
 }
 
-fn king_is_valid_move(from: Point, to: Point) -> bool {
+const fn king_is_valid_move(from: &Point, to: &Point) -> bool {
     from.x.abs_diff(to.x) == 1 && from.y.abs_diff(to.y) == 1
 }
 
-fn bishop_is_valid_move(board: &Board, from: Point, to: Point) -> bool {
-    let ray = or_return!(diagonal_ray(from.clone(), to.clone()), false);
+fn bishop_is_valid_move(board: &Board, from: &Point, to: &Point) -> bool {
+    let ray = or_return!(diagonal_ray(from, to), false);
 
     board
-        .ray2d(from, ray)
-        .map(|col| col.point == to)
-        .unwrap_or(true)
+        .ray2d(from.clone(), ray)
+        .map_or(true, |col| col.point == *to)
 }
 
-fn knight_is_valid_move(from: Point, to: Point) -> bool {
+const fn knight_is_valid_move(from: &Point, to: &Point) -> bool {
     from.x.abs_diff(to.x) == 2 && from.y.abs_diff(to.y) == 1
 }
 
-
-fn queen_is_valid_move(board: &Board, from: Point, to: Point) -> bool {
-    rook_is_valid_move(board, from.clone(), to.clone()) || bishop_is_valid_move(board, from, to)
+fn queen_is_valid_move(board: &Board, from: Point, to: &Point) -> bool {
+    bishop_is_valid_move(board, &from, to) || rook_is_valid_move(board, from, to)
 }
 
-fn rook_is_valid_move(board: &Board, from: Point, to: Point) -> bool {
+fn rook_is_valid_move(board: &Board, from: Point, to: &Point) -> bool {
     if from.x == to.x {
         let dir = match from.y.cmp(&to.y) {
             Ordering::Greater => Sign::Positive,
@@ -119,10 +117,10 @@ fn rook_is_valid_move(board: &Board, from: Point, to: Point) -> bool {
         };
 
         let ray = Ray2D::new(Sign::Zero, dir);
-        return match board.ray2d(from.clone(), ray) {
-            Some(coll) if coll.point.y == to.y => true,
-            _ => false,
-        };
+
+        return board
+            .ray2d(from, ray)
+            .prev_is_some_and(|coll| coll.point.y == to.y);
     }
 
     from.y == to.y && {
@@ -133,8 +131,7 @@ fn rook_is_valid_move(board: &Board, from: Point, to: Point) -> bool {
 
         let ray = Ray2D::new(dir, Sign::Zero);
         board
-            .ray2d(from.clone(), ray)
+            .ray2d(from, ray)
             .prev_is_some_and(|coll| coll.point.x == to.x)
     }
 }
-
