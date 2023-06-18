@@ -14,3 +14,12 @@ impl Display for Color {
         }
     }
 }
+
+impl Color {
+    pub const fn contrary(self) -> Self {
+        match self {
+            Self::White => Self::Black,
+            Self::Black => Self::White,
+        }
+    }
+}

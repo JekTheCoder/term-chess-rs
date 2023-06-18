@@ -12,6 +12,7 @@ use std::io::stdin;
 
 use crate::{game::{board::{Board, self}, Game}, mov::Mov};
 
+mod macros;
 mod game;
 mod mov;
 mod traits;

@@ -1,20 +1,15 @@
 mod diagonal_ray;
 mod pawn_valid_mov;
+mod rook_valid_mov;
 
-use std::cmp::Ordering;
+use crate::traits::{clone_as::CloneAs, get_two_points_mut::Point};
 
-use crate::traits::{clone_as::CloneAs, get_two_points_mut::Point, is_some_and::IsSomeAnd};
-
-use self::{diagonal_ray::diagonal_ray, pawn_valid_mov::pawn_is_valid_move};
-
-use super::{
-    board::Board,
-    mov::MoveContext,
-    query::{
-        ray2d::{Ray2D, RayQuery},
-        sign::Sign,
-    }, color::Color,
+use self::{
+    diagonal_ray::diagonal_ray, pawn_valid_mov::pawn_is_valid_move,
+    rook_valid_mov::rook_is_valid_move,
 };
+
+use super::{board::Board, color::Color, mov::MoveContext, query::ray2d::RayQuery};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Piece {
@@ -101,31 +96,4 @@ const fn knight_is_valid_move(from: &Point, to: &Point) -> bool {
 
 fn queen_is_valid_move(board: &Board, from: Point, to: &Point) -> bool {
     bishop_is_valid_move(board, &from, to) || rook_is_valid_move(board, from, to)
-}
-
-fn rook_is_valid_move(board: &Board, from: Point, to: &Point) -> bool {
-    if from.x == to.x {
-        let dir = match from.y.cmp(&to.y) {
-            Ordering::Greater => Sign::Positive,
-            _ => Sign::Negative,
-        };
-
-        let ray = Ray2D::new(Sign::Zero, dir);
-
-        return board
-            .ray2d(from, ray)
-            .prev_is_some_and(|coll| coll.point.y == to.y);
-    }
-
-    from.y == to.y && {
-        let dir = match from.x.cmp(&to.x) {
-            Ordering::Greater => Sign::Positive,
-            _ => Sign::Negative,
-        };
-
-        let ray = Ray2D::new(dir, Sign::Zero);
-        board
-            .ray2d(from, ray)
-            .prev_is_some_and(|coll| coll.point.x == to.x)
-    }
 }

@@ -43,15 +43,20 @@ impl Game {
     }
 
     pub fn mov(&mut self, from: &Point, to: &Point) -> Result<Event, board::mov::Error> {
-        self.board.mov(from, to, self.turn).map(|info| match info {
-            board::mov::Info::Eaten(Piece {
-                kind: Kind::King, ..
-            }) => Event::Win(self.turn),
-            board::mov::Info::Eaten(piece) => {
-                self.eaten.push(self.local, piece);
-                Event::None
-            }
-            board::mov::Info::Moved => Event::None,
+        self.board.mov(from, to, self.turn).map(|info| {
+            let event = match info {
+                board::mov::Info::Eaten(Piece {
+                    kind: Kind::King, ..
+                }) => Event::Win(self.turn),
+                board::mov::Info::Eaten(piece) => {
+                    self.eaten.push(self.turn, piece);
+                    Event::None
+                }
+                board::mov::Info::Moved => Event::None,
+            };
+
+			self.turn = self.turn.contrary();
+			event
         })
     }
 }

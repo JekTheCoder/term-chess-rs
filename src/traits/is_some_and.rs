@@ -4,6 +4,6 @@ pub trait IsSomeAnd<T> {
 
 impl<T> IsSomeAnd<T> for Option<T> {
     fn prev_is_some_and<F: Fn(T) -> bool>(self, f: F) -> bool {
-        self.map_or(true, f) 
+        self.map_or(false, f) 
     }
 }

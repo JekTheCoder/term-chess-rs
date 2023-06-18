@@ -7,7 +7,7 @@ use crate::traits::get_two_points_mut::Point;
 
 use self::create::{create_board, BoardArray};
 
-use super::{query::sign::Sign, color::Color};
+use super::{color::Color, query::sign::Sign};
 
 pub struct Board {
     board: BoardArray,
@@ -40,6 +40,27 @@ impl Board {
             Sign::Positive
         } else {
             Sign::Negative
+        }
+    }
+
+    pub const fn array(&self) -> &BoardArray {
+        &self.board
+    }
+}
+
+#[cfg(test)]
+impl Board {
+    pub fn empty() -> Self {
+        Self {
+            board: Default::default(),
+            local: Color::White,
+        }
+    }
+
+    pub const fn with_array(board: BoardArray) -> Self {
+        Self {
+            board,
+            local: Color::White,
         }
     }
 }
