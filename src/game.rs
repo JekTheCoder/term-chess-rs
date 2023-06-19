@@ -169,4 +169,25 @@ mod tests {
         assert_eq!(ev, Event::None);
         assert_eq!(game.eaten.local, vec![may_eaten]);
     }
+
+    #[test]
+    fn can_win() {
+        let board = board!(
+           ['R', ..];
+           empty;
+           empty;
+           empty;
+           empty;
+           empty;
+           empty;
+           ['k', ..];
+        );
+        let board = Board::with_array(board);
+        let mut game = Game::with_board(board);
+        let ev = game
+            .mov(&Point { x: 0, y: 0 }, &Point { x: 0, y: 7 })
+            .unwrap();
+
+        assert_eq!(ev, Event::Win(Color::White));
+    }
 }
