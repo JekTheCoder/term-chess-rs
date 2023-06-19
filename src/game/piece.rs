@@ -78,8 +78,8 @@ macro_rules! or_return {
     }};
 }
 
-const fn king_is_valid_move(from: &Point, to: &Point) -> bool {
-    from.x.abs_diff(to.x) == 1 && from.y.abs_diff(to.y) == 1
+fn king_is_valid_move(from: &Point, to: &Point) -> bool {
+    from.x.abs_diff(to.x) == 1 || from.y.abs_diff(to.y) == 1
 }
 
 fn bishop_is_valid_move(board: &Board, from: &Point, to: &Point) -> bool {
@@ -91,7 +91,8 @@ fn bishop_is_valid_move(board: &Board, from: &Point, to: &Point) -> bool {
 }
 
 const fn knight_is_valid_move(from: &Point, to: &Point) -> bool {
-    from.x.abs_diff(to.x) == 2 && from.y.abs_diff(to.y) == 1
+    (from.x.abs_diff(to.x) == 1 && from.y.abs_diff(to.y) == 2)
+        || (from.x.abs_diff(to.x) == 2 && from.y.abs_diff(to.y) == 1)
 }
 
 fn queen_is_valid_move(board: &Board, from: Point, to: &Point) -> bool {

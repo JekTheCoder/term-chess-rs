@@ -35,15 +35,16 @@ fn main() {
     for mov in moves {
         let crate::mov::Mov { from, to } = mov.into_points();
         if let Err(err) = game.mov(&from, &to) {
-            match err {
-                board::mov::Error::InvalidMove => println!("Invalid move"),
-                board::mov::Error::SamePoint => println!("Same point"),
-                board::mov::Error::StartOutOfBounds => println!("Start out of bounds"),
-                board::mov::Error::EndOutOfBounds => println!("End out of bounds"),
-                board::mov::Error::CantEat => println!("Cant eat"),
-                board::mov::Error::FromStartEmpty => println!("From start empty"),
-                board::mov::Error::PieceNotOfTeam => println!("Piece not of team"),
-            }
+            let message = match err {
+                board::mov::Error::InvalidMove =>"Invalid move",
+                board::mov::Error::SamePoint =>"Same point",
+                board::mov::Error::StartOutOfBounds =>"Start out of bounds",
+                board::mov::Error::EndOutOfBounds =>"End out of bounds",
+                board::mov::Error::CantEat =>"Cant eat",
+                board::mov::Error::FromStartEmpty =>"From start empty",
+                board::mov::Error::PieceNotOfTeam =>"Piece not of team",
+            };
+            println!("{message}");
         } else {
             println!("{game}");
         }
