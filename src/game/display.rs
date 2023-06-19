@@ -6,6 +6,8 @@ use super::{cell::Cell, Eaten, Game, piece::Piece};
 
 impl Display for Game {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        dbg!(&self.eaten.local);
+
         write!(f, "          ")?;
         for i in 0..8 {
             let letter: char = (65usize + i).cast();

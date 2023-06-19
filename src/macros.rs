@@ -108,7 +108,7 @@ macro_rules! cell {
 		}
 	};
     ('k') => {
-        cell!('♚')
+        crate::macros::cell!('♚')
     };
 	('r') => {
 		crate::game::cell::Cell {
