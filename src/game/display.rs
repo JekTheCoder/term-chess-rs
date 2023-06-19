@@ -6,7 +6,7 @@ use super::{cell::Cell, Eaten, Game, piece::Piece};
 
 impl Display for Game {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        dbg!(&self.eaten.local);
+        writeln!(f, "Turn: {}\n", self.turn)?;
 
         write!(f, "          ")?;
         for i in 0..8 {
@@ -17,17 +17,23 @@ impl Display for Game {
 
         for (i, row) in self.board.array().iter().enumerate() {
             write_row_delimiter(f)?;
-            write_row_cell(f, &self.eaten, row, i + 1)?;
+            write_row_cell(f, &self.eaten, row, i)?;
         }
 
         write_row_delimiter(f)?;
+
+        write!(f, "          ")?;
+        for i in 0..8 {
+            let letter: char = (65usize + i).cast();
+            write!(f, " {letter} ")?;
+        }
 
         Ok(())
     }
 }
 
 fn write_row_delimiter(f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    writeln!(f, "+--+--+   +--+--+--+--+--+--+--+--+")
+    writeln!(f, "+--+--+   +--+--+--+--+--+--+--+--+   +--+--+")
 }
 
 fn write_row_cell(
@@ -44,7 +50,8 @@ fn write_row_cell(
 	write_piece(f, local.get(p + 1))?;
     write!(
         f,
-        " {row} |",
+        " {} |",
+        row+1
     )?;
 
 
@@ -57,12 +64,16 @@ fn write_row_cell(
                 .map_or(' ', |piece| -> char { piece.clone_as() })
         )?;
     }
+
+    write!(f, " {} |", row+1)?;
+    write_piece(f, rival.get(p))?;
+    write_piece(f, rival.get(p + 1))?;
     writeln!(f)
 }
 
 fn write_piece(f: &mut std::fmt::Formatter<'_>, piece: Option<&Piece>) -> std::fmt::Result {
 	if let Some(piece) = piece {
-		write!(f, "{}|", piece.clone_as())
+		write!(f, "{} |", piece.clone_as())
 	}
 	else {
 		write!(f, "  |")
