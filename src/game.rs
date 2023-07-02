@@ -91,11 +91,11 @@ impl Game {
                         self.eaten.push(self.local, piece);
                     }
 
-                    if !(moved.kind == piece::Kind::Pawn && is_last_row) {
-                        Event::None
-                    } else {
+                    if moved.kind == piece::Kind::Pawn && is_last_row {
                         moved.kind = piece::Kind::Queen;
                         Event::QueenArrive(self.turn)
+                    } else {
+                        Event::None
                     }
                 }
             };
@@ -123,7 +123,7 @@ impl Game {
 
     pub fn is_last_row(&self, row: usize) -> bool {
         if self.direction_of(self.turn) == Sign::Positive {
-            row + 1 == self.board.array().len() 
+            row + 1 == self.board.array().len()
         } else {
             row == 0
         }
@@ -135,8 +135,8 @@ impl Game {
     pub const fn new(board: Board, local: Color, turn: Color, eaten: Eaten) -> Self {
         Self {
             board,
-            local,
             turn,
+            local,
             eaten,
         }
     }

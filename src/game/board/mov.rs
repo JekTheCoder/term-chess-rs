@@ -5,7 +5,7 @@ use crate::{
 
 use super::Board;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Error {
     StartOutOfBounds,
     FromStartEmpty,

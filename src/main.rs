@@ -44,7 +44,7 @@ fn main() {
                         input::mov::coord::ParseError::Row => "row",
                     };
 
-                    println!("Invalid {}: {}", ident, axis);
+                    println!("Invalid {ident}: {axis}");
                 }
                 input::mov::ParseError::NotFound => println!("Second coord not found"),
             };

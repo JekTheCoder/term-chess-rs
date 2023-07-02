@@ -35,9 +35,8 @@ mod tests {
     #[test]
     fn it_works() {
         let mut slice = [1, 2, 3, 4, 5];
-        let (a, b) = match slice.get_both_mut(1, 3).unwrap() {
-            MayBoth::Two(a, b) => (a, b),
-            _ => unreachable!(),
+        let MayBoth::Two(a, b) = slice.get_both_mut(1, 3).unwrap() else {
+            unreachable!();
         };
 
         *a = 10;
@@ -50,9 +49,8 @@ mod tests {
     #[test]
     fn works_reverse() {
         let mut slice = ['a', 'b', 'c', 'd', 'e'];
-        let (a, b) = match slice.get_both_mut(4, 2).unwrap() {
-            MayBoth::Two(a, b) => (a, b),
-            _ => unreachable!(),
+        let MayBoth::Two(a, b) = slice.get_both_mut(4, 2).unwrap() else {
+            unreachable!();
         };
 
         *a = 'z';
@@ -65,9 +63,8 @@ mod tests {
     #[test]
     fn can_mut_one() {
         let mut slice = ['a', 'b', 'c', 'd', 'e'];
-        let a = match slice.get_both_mut(4, 4).unwrap() {
-            MayBoth::One(a) => a,
-            _ => unreachable!(),
+        let MayBoth::One(a) = slice.get_both_mut(4, 4).unwrap() else {
+            unreachable!();
         };
 
         *a = 'z';

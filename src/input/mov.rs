@@ -29,7 +29,7 @@ impl FromStr for Mov {
     type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let (f, sec) = s.split_once('-').ok_or_else(|| ParseError::NotFound)?;
+        let (f, sec) = s.split_once('-').ok_or(ParseError::NotFound)?;
         let from = Coord::from_str(f).map_err(|err| ParseError::Coord {
             kind: Kind::From,
             err,

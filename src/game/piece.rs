@@ -78,7 +78,7 @@ macro_rules! or_return {
     }};
 }
 
-fn king_is_valid_move(from: &Point, to: &Point) -> bool {
+const fn king_is_valid_move(from: &Point, to: &Point) -> bool {
     from.x.abs_diff(to.x) == 1 || from.y.abs_diff(to.y) == 1
 }
 
