@@ -19,24 +19,24 @@ macro_rules! has_to {
 }
 
 pub fn pawn_is_valid_move(context: MoveContext<'_>, color: Color) -> bool {
-    let MoveContext { board, from, to } = context;
+    let MoveContext { game, from, to } = context;
 
-    let vertical = board.direction_of(color);
+    let vertical = game.direction_of(color);
 
     has_to!(from.x == to.x || from.x + 1 == to.x || to.x + 1 == from.x);
 
     match to.x.cmp(&from.x) {
-        Ordering::Greater => board
+        Ordering::Greater => game.board
             .ray2d_limit(from, Ray2D::new(Sign::Positive, vertical), 1)
             .is_some(),
-        Ordering::Less => board
+        Ordering::Less => game.board
             .ray2d_limit(from, Ray2D::new(Sign::Negative, vertical), 1)
             .is_some(),
         Ordering::Equal => {
-            let mov_limit = usize::from(board.pawn_first_mov(from.y, color)) + 1;
+            let mov_limit = usize::from(game.pawn_first_mov(from.y, color)) + 1;
             let from_y = from.y;
 
-            board
+            game.board
                 .ray2d_limit(from, Ray2D::new(Sign::Zero, vertical), mov_limit)
                 .is_none()
                 && vertical_range(vertical, from_y, mov_limit).contains(&to.y)
@@ -68,7 +68,7 @@ mod tests {
     use crate::{
         game::{
             board::Board,
-            piece::{Kind, Piece},
+            piece::{Kind, Piece}, Game,
         },
         traits::get_two_points_mut::Point,
     };
@@ -76,14 +76,17 @@ mod tests {
     #[test]
     fn validates_direction() {
         let board = Board::default();
+        let game = Game::with_board(board);
+
         let piece = Piece::new(Color::White, Kind::Pawn);
         let valid_mov = piece.is_valid_move(MoveContext {
-            board: &board,
+            game: &game,
             to: Point { x: 0, y: 2 },
             from: Point { x: 0, y: 1 },
         });
+
         let invalid_mov = piece.is_valid_move(MoveContext {
-            board: &board,
+            game: &game,
             to: Point { x: 4, y: 3 },
             from: Point { x: 0, y: 1 },
         });
@@ -95,10 +98,12 @@ mod tests {
     #[test]
     fn can_mov_non_local() {
         let board = Board::default();
+        let game = Game::with_board(board);
+
         let piece = Piece::new(Color::Black, Kind::Pawn);
 
         assert!(piece.is_valid_move(MoveContext {
-            board: &board,
+            game: &game,
             from: Point { x: 0, y: 6 },
             to: Point { x: 0, y: 5 },
         }));

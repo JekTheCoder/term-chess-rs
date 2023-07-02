@@ -31,8 +31,23 @@ fn main() {
 
     let moves = stdin().lines().flatten().flat_map(|line| {
         let mov = line.parse::<Mov>();
-        if mov.is_err() {
-            println!("What?");
+        if let Err(mov_err) = &mov {
+            match mov_err {
+                input::mov::ParseError::Coord { kind, err } => {
+                    let ident = match kind {
+                        input::mov::Kind::From => "from",
+                        input::mov::Kind::To => "to",
+                    };
+
+                    let axis = match err {
+                        input::mov::coord::ParseError::Col => "col",
+                        input::mov::coord::ParseError::Row => "row",
+                    };
+
+                    println!("Invalid {}: {}", ident, axis);
+                }
+                input::mov::ParseError::NotFound => println!("Second coord not found"),
+            };
         }
 
         mov
@@ -41,15 +56,21 @@ fn main() {
     for mov in moves {
         let crate::mov::Mov { from, to } = mov.into_points();
         match game.mov(&from, &to) {
-            Ok(game::Event::None) => {
-                println!("---------------------------------------------");
+            Ok(event) => {
+                separator();
                 println!("{game}");
-            }
-            Ok(game::Event::Win(color)) => {
-                println!("--------------------------------------------------");
-                println!("{game}");
-                println!("{color} Wins!");
-                break;
+                match event {
+                    game::Event::None => {}
+                    game::Event::Win(color) => {
+                        println!("{color} Wins!");
+                        separator();
+                        break;
+                    }
+                    game::Event::QueenArrive(color) => {
+                        println!("A {color} Queen has arrived!");
+                        separator();
+                    }
+                }
             }
             Err(err) => {
                 let message = match err {
@@ -65,4 +86,8 @@ fn main() {
             }
         }
     }
+}
+
+fn separator() {
+    println!("---------------------------------------------");
 }

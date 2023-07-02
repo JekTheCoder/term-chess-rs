@@ -44,7 +44,7 @@ impl FromStr for Mov {
     }
 }
 
-mod coord {
+pub mod coord {
     use std::{num::NonZeroUsize, str::FromStr};
 
     use crate::traits::get_two_points_mut::Point;

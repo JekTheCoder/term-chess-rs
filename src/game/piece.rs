@@ -39,9 +39,9 @@ impl Piece {
     pub fn is_valid_move(&self, mov: MoveContext<'_>) -> bool {
         match self.kind {
             Kind::King => king_is_valid_move(&mov.from, &mov.to),
-            Kind::Queen => queen_is_valid_move(mov.board, mov.from, &mov.to),
-            Kind::Rook => rook_is_valid_move(mov.board, mov.from, &mov.to),
-            Kind::Bishop => bishop_is_valid_move(mov.board, &mov.from, &mov.to),
+            Kind::Queen => queen_is_valid_move(&mov.game.board, mov.from, &mov.to),
+            Kind::Rook => rook_is_valid_move(&mov.game.board, mov.from, &mov.to),
+            Kind::Bishop => bishop_is_valid_move(&mov.game.board, &mov.from, &mov.to),
             Kind::Knight => knight_is_valid_move(&mov.from, &mov.to),
             Kind::Pawn => pawn_is_valid_move(mov, self.color),
         }

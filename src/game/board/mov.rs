@@ -1,5 +1,5 @@
 use crate::{
-    game::{cell::Cell, mov::MoveContext, piece::Piece, color::Color},
+    game::{cell::Cell, piece::Piece},
     traits::get_two_points_mut::{GetTwoPointsMut, Point},
 };
 
@@ -16,39 +16,23 @@ pub enum Error {
     PieceNotOfTeam,
 }
 
+#[derive(Debug, PartialEq, Eq)]
+pub struct Info<'a> {
+    pub kind: InfoKind,
+    pub moved: &'a mut Piece,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Info {
+pub enum InfoKind {
     Eaten(Piece),
     Moved,
 }
 
-pub fn board(
-    board: &mut Board,
+pub fn board<'a>(
+    board: &'a mut Board,
     from_point: &Point,
     to_point: &Point,
-    turn: Color,
-) -> Result<Info, Error> {
-    if let Some(piece) = board
-        .board
-        .get(from_point.y)
-        .and_then(|arr| arr.get(from_point.x))
-        .and_then(|cell| cell.piece.as_ref())
-    {
-        if piece.color != turn {
-            return Err(Error::PieceNotOfTeam);
-        }
-
-        let mov_context = MoveContext {
-            to: to_point.clone(),
-            from: from_point.clone(),
-            board,
-        };
-
-        if !piece.is_valid_move(mov_context) {
-            return Err(Error::InvalidMove);
-        }
-    }
-
+) -> Result<Info<'a>, Error> {
     let (from, to) = board
         .board
         .get_two_points_mut(from_point, to_point)
@@ -60,17 +44,33 @@ pub fn board(
     cells(from, to)
 }
 
-pub fn cells(from: &mut Cell, to: &mut Cell) -> Result<Info, Error> {
-    if let Some(to_piece) = to.piece.as_mut() {
-        let from_piece = from.piece.as_ref().ok_or(Error::FromStartEmpty)?;
-        if from_piece.can_eat(to_piece) {
-            let from_piece = from.piece.take().unwrap();
-            Ok(Info::Eaten(std::mem::replace(to_piece, from_piece)))
-        } else {
-            Err(Error::CantEat)
+pub fn cells<'a>(from: &'a mut Cell, to: &'a mut Cell) -> Result<Info<'a>, Error> {
+    let from_piece = from.piece.take().ok_or(Error::FromStartEmpty)?;
+    let info = if let Some(to_piece) = to.piece.as_mut() {
+        if !from_piece.can_eat(to_piece) {
+            return Err(Error::CantEat);
+        }
+
+        let eaten = std::mem::replace(to_piece, from_piece);
+
+        // It's ok to unwrap here because we know that to_point is not empty
+        let moved = to.piece.as_mut().unwrap();
+
+        Info {
+            kind: InfoKind::Eaten(eaten),
+            moved,
         }
     } else {
-        std::mem::swap(from, to);
-        Ok(Info::Moved)
-    }
+        to.piece = Some(from_piece);
+
+        // It's ok to unwrap here because we know that to_point is not empty
+        let moved = to.piece.as_mut().unwrap();
+
+        Info {
+            moved,
+            kind: InfoKind::Moved,
+        }
+    };
+
+    Ok(info)
 }

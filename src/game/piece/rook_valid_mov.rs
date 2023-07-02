@@ -48,7 +48,7 @@ mod tests {
         game::{
             board::mov,
             color::Color,
-            piece::{Kind, Piece},
+            piece::{Kind, Piece}, Game,
         },
         macros::board,
     };
@@ -66,11 +66,11 @@ mod tests {
             ['r', ..];
         );
         let mut board = Board::with_array(board);
-        let res = board.mov(&Point { x: 0, y: 0 }, &Point { x: 0, y: 7 }, Color::White);
+        let res = board.mov(&Point { x: 0, y: 0 }, &Point { x: 0, y: 7 });
 
         assert_eq!(
-            res,
-            Ok(mov::Info::Eaten(Piece {
+            res.map(|res| res.kind),
+            Ok(mov::InfoKind::Eaten(Piece {
                 kind: Kind::Rook,
                 color: Color::Black
             }))
@@ -81,17 +81,18 @@ mod tests {
     fn do_not_surpass() {
         let board = board!(
             ['R', ..];
-            empty;
-            empty;
             ['P', ..];
             empty;
             empty;
             empty;
-            ['r', ..];
+            empty;
+            empty;
+            ['q', ..];
         );
-        let mut board = Board::with_array(board);
-        let res = board.mov(&Point { x: 0, y: 0 }, &Point { x: 0, y: 7 }, Color::White);
+        let board = Board::with_array(board);
+        let mut game = Game::with_board(board);
+        let res = game.mov(&Point { x: 0, y: 0 }, &Point { x: 0, y: 7 });
 
-        assert!(res.is_err());
+        assert_eq!(res, Err(mov::Error::InvalidMove));
     }
 }

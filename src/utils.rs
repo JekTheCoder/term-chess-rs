@@ -1,4 +1,3 @@
-use core::num;
 use std::cmp::Ordering;
 
 pub fn ord<T: Ord>(n1: T, n2: T) -> (T, T, Ordering) {
